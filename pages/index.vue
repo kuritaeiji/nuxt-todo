@@ -74,7 +74,7 @@ export default {
       ]
     }
   },
-  computed: mapGetters(['tasks', 'filteredTasks']),
+  computed: mapGetters(['filteredTasks']),
   methods: {
     ...mapActions(['addTask', 'toggleCompleted', 'toggleImportant', 'setTabNumber']),
     addTaskTemplate () {

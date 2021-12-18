@@ -7,9 +7,6 @@ export const state = () => ({
 })
 
 export const getters = {
-  tasks (state) {
-    return state.tasks
-  },
   findTaskById (state) {
     return id => state.tasks.find(t => t.id === id)
   },
