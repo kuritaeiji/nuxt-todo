@@ -8,20 +8,20 @@
 
     <v-card flat tile width="700" class="d-flex mx-auto mb-4">
       <v-card-actions class="py-0">
-        <v-icon color="primary" @click="addTask">
+        <v-icon color="primary" @click="addTaskTemplate">
           mdi-plus
         </v-icon>
       </v-card-actions>
 
       <v-card-text class="py-0">
         <v-form ref="form" v-model="valid" @submit.prevent>
-          <v-text-field v-model="taskTitle" label="タスクを追加する" :rules="rules" @keyup.enter="addTask" />
+          <v-text-field v-model="taskTitle" label="タスクを追加する" :rules="rules" @keyup.enter="addTaskTemplate" />
         </v-form>
       </v-card-text>
     </v-card>
 
     <v-card
-      v-for="task of filteredTasks"
+      v-for="task of filteredTasks(tab)"
       :key="task.title"
       flat
       tile
@@ -29,10 +29,10 @@
       class="d-flex mb-4 mx-auto"
     >
       <v-card-actions>
-        <v-icon v-if="task.completed" color="green accent-4" class="c-p">
+        <v-icon v-if="task.completed" color="green accent-4" class="c-p" @click="toggleCompletedTemplate(task)">
           mdi-checkbox-marked
         </v-icon>
-        <v-icon v-else color="green accent-4" class="c-p">
+        <v-icon v-else color="green accent-4" class="c-p" @click="toggleCompletedTemplate(task)">
           mdi-checkbox-blank-outline
         </v-icon>
       </v-card-actions>
@@ -44,10 +44,10 @@
       <v-spacer />
 
       <v-card-actions class="text-right">
-        <v-icon v-if="task.important" color="red" class="c-p">
+        <v-icon v-if="task.important" color="red" class="c-p" @click="toggleImportantTemplate(task)">
           mdi-heart
         </v-icon>
-        <v-icon v-else color="red" class="c-p">
+        <v-icon v-else color="red" class="c-p" @click="toggleImportantTemplate(task)">
           mdi-heart-outline
         </v-icon>
       </v-card-actions>
@@ -56,6 +56,8 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   data () {
     return {
@@ -71,37 +73,26 @@ export default {
         { name: '重要' },
         { name: '未完了' },
         { name: '完了' }
-      ],
-      tasks: [
-        { title: '食器を洗う', completed: true, important: true },
-        { title: '洗濯物をする', completed: false, important: false }
       ]
     }
   },
-  computed: {
-    filteredTasks () {
-      switch (this.tab) {
-        case 0:
-          return this.tasks
-        case 1:
-          return this.tasks.filter(t => t.important)
-        case 2:
-          return this.tasks.filter(t => !t.completed)
-        case 3:
-          return this.tasks.filter(t => t.completed)
-      }
-      return this.tasks
-    }
-  },
-
+  computed: mapGetters(['tasks', 'filteredTasks']),
   methods: {
-    addTask () {
+    ...mapActions(['addTask', 'toggleCompleted', 'toggleImportant']),
+    addTaskTemplate () {
       const form = this.$refs.form
       if (form.validate()) {
-        this.tasks.push({ title: this.taskTitle, completed: false, important: false })
+        this.addTask({
+          task: { title: this.taskTitle, completed: false, important: false }
+        })
         this.taskTitle = ''
-        this.valid = true
       }
+    },
+    toggleCompletedTemplate (task) {
+      this.toggleCompleted({ id: task.id })
+    },
+    toggleImportantTemplate (task) {
+      this.toggleImportant({ id: task.id })
     }
   }
 }
