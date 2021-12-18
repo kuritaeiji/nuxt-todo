@@ -3,26 +3,36 @@ export const state = () => ({
     { id: 1, title: '食器を洗う', completed: true, important: true },
     { id: 2, title: '洗濯物をする', completed: false, important: false }
   ],
-  tabNumber: 0
+  tabNumber: 0,
+  currentId: 2
 })
 
 export const getters = {
   findTaskById (state) {
     return id => state.tasks.find(t => t.id === id)
   },
-  filteredTasks (state) {
+  filteredTasks (state, { importantTasks, incompletedTasks, completedTasks }) {
     switch (state.tabNumber) {
       case 0:
         return state.tasks
       case 1:
-        return state.tasks.filter(t => t.important)
+        return importantTasks
       case 2:
-        return state.tasks.filter(t => !t.completed)
+        return incompletedTasks
       case 3:
-        return state.tasks.filter(t => t.completed)
+        return completedTasks
       default:
         return state.tasks
     }
+  },
+  importantTasks (state) {
+    return state.tasks.filter(t => t.important)
+  },
+  incompletedTasks (state) {
+    return state.tasks.filter(t => !t.completed)
+  },
+  completedTasks (state) {
+    return state.tasks.filter(t => t.completed)
   }
 }
 
