@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-tabs v-model="tab" background-color="grey lighten-4" centered class="grey--text mb-5">
+    <v-tabs background-color="grey lighten-4" centered class="grey--text mb-5" @change="setTabNumberTemplate">
       <v-tab v-for="t of tabs" :key="t.name">
         {{ t.name }}
       </v-tab>
@@ -14,14 +14,14 @@
       </v-card-actions>
 
       <v-card-text class="py-0">
-        <v-form ref="form" v-model="valid" @submit.prevent>
+        <v-form ref="form" @submit.prevent>
           <v-text-field v-model="taskTitle" label="タスクを追加する" :rules="rules" @keyup.enter="addTaskTemplate" />
         </v-form>
       </v-card-text>
     </v-card>
 
     <v-card
-      v-for="task of filteredTasks(tab)"
+      v-for="task of filteredTasks"
       :key="task.title"
       flat
       tile
@@ -61,8 +61,6 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
-      tab: 0,
-      valid: false,
       rules: [
         v => !!v || 'タスク名を入力して下さい',
         v => v.length <= 20 || '20文字以内で入力して下さい'
@@ -78,7 +76,7 @@ export default {
   },
   computed: mapGetters(['tasks', 'filteredTasks']),
   methods: {
-    ...mapActions(['addTask', 'toggleCompleted', 'toggleImportant']),
+    ...mapActions(['addTask', 'toggleCompleted', 'toggleImportant', 'setTabNumber']),
     addTaskTemplate () {
       const form = this.$refs.form
       if (form.validate()) {
@@ -93,6 +91,9 @@ export default {
     },
     toggleImportantTemplate (task) {
       this.toggleImportant({ id: task.id })
+    },
+    setTabNumberTemplate (event) {
+      this.setTabNumber({ tabNumber: event })
     }
   }
 }

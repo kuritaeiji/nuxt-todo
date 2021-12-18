@@ -2,7 +2,8 @@ export const state = () => ({
   tasks: [
     { id: 1, title: '食器を洗う', completed: true, important: true },
     { id: 2, title: '洗濯物をする', completed: false, important: false }
-  ]
+  ],
+  tabNumber: 0
 })
 
 export const getters = {
@@ -13,19 +14,17 @@ export const getters = {
     return id => state.tasks.find(t => t.id === id)
   },
   filteredTasks (state) {
-    return (tab) => {
-      switch (tab) {
-        case 0:
-          return state.tasks
-        case 1:
-          return state.tasks.filter(t => t.important)
-        case 2:
-          return state.tasks.filter(t => !t.completed)
-        case 3:
-          return state.tasks.filter(t => t.completed)
-        default:
-          return state.tasks
-      }
+    switch (state.tabNumber) {
+      case 0:
+        return state.tasks
+      case 1:
+        return state.tasks.filter(t => t.important)
+      case 2:
+        return state.tasks.filter(t => !t.completed)
+      case 3:
+        return state.tasks.filter(t => t.completed)
+      default:
+        return state.tasks
     }
   }
 }
@@ -39,6 +38,9 @@ export const mutations = {
   },
   toggleImportant (state, { task }) {
     task.important = !task.important
+  },
+  setTabNumber (state, { tabNumber }) {
+    state.tabNumber = tabNumber
   }
 }
 
@@ -53,5 +55,8 @@ export const actions = {
   toggleImportant ({ commit, getters }, { id }) {
     const task = getters.findTaskById(id)
     commit('toggleImportant', { task })
+  },
+  setTabNumber ({ commit }, payload) {
+    commit('setTabNumber', payload)
   }
 }
